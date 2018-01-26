@@ -1,4 +1,10 @@
- var Beaver = function(x, y) {
+var scene1 = function() {
+    background(0, 0, 0);
+    
+};
+
+
+var Beaver = function(x, y) {
     this.x = x;
     this.y = y;
     this.img = getImage("creatures/Hopper-Happy");
@@ -28,7 +34,23 @@ Beaver.prototype.checkForStickGrab = function(stick) {
         this.sticks++;
     }
 };
-
+Beaver.prototype.checkForRockGrab = function(Rock) {
+    if((Rock.x >= this.x && Rock.x <= (this.x + 40)) && (Rock.y >= (this.y-40) && Rock.y <= (this .y+20))) {
+        Rock.y= -400;
+        this.sticks--;
+    }};
+    
+Beaver.prototype.checkForWallHit = function(Wall) {
+    if((Wall.x >= this.x && Wall.x <= (this.x + 70)) && (Wall.y >= (this.y-74) && Wall.y <= (this .y+65))) {
+        Wall.y= -400;
+        this.sticks--;
+    } 
+    
+     
+    
+     scene1();
+};
+//Stick
 var Stick = function(x, y) {
     this.x = x;
     this.y = y;
@@ -39,6 +61,60 @@ Stick.prototype.draw = function() {
     rectMode(CENTER);
     rect(this.x, this.y, 5, 40);
 };
+
+//Bad rocks
+
+var Rock = function (x, y) {
+    this.x = x;
+    this.y = y;
+      
+};
+
+Rock.prototype.draw = function() {
+    
+     image(getImage("cute/Rock"), this.x, this.y,30, 50);
+};
+
+var rocks = [];
+
+for (var i=0; i<20; i++) {
+    
+rocks.push(new Rock(i * 70 + 319, random(11,162)));   
+
+}
+
+
+var Wall = function (x,y)
+{
+    this.x=x;
+    this.y=y;
+};
+
+var walls = [];
+
+for(var i=0; i<20; i++) {
+    //Make them randomize 1-2 and then based on that either spawn at the very top or very bottom
+        var rand=random(1,3);
+    
+    //println(rand);
+    if (rand>2) {
+        walls.push(new Wall(i * 117 + 331, random(351,323)));   
+        
+    }
+    else if (rand<2) {
+     walls.push(new Wall(i * 121 + 367, random(10,11)));   
+        
+    }
+    
+
+}
+
+Wall.prototype.draw = function() {
+    fill(222, 86, 222);
+    rectMode(CENTER);
+     rect(this.x, this.y, 40, 129);
+};
+
 
 var beaver = new Beaver(200, 300);
 
@@ -56,6 +132,7 @@ draw = function() {
     
     // static
     background(227, 254, 255);
+    
     fill(130, 79, 43);
     rectMode(CORNER);
     rect(0, height*0.90, width, height*0.10);
@@ -74,8 +151,23 @@ draw = function() {
         sticks[i].x -= 1;
     }
     
+    for (var i=0; i<rocks.length; i++) {
+        rocks[i].draw();  
+        beaver.checkForRockGrab(rocks[i]);
+        rocks[i].x -= 1;
+        
+    }
+    for (var i=0; i<walls.length;i++) {
+        walls[i].draw();
+        
+        walls[i].x -=1;
+        
+    }
+    for (var i=0; i<walls.length; i++) {
+    }
     textSize(18);
     text("Score: " + beaver.sticks, 20, 30);
+    
     
     if (beaver.sticks/sticks.length >= 0.95) {
         textSize(36);
@@ -88,5 +180,5 @@ draw = function() {
         beaver.fall();
     }
     beaver.draw();
-    
 };
+
